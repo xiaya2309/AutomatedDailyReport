@@ -19,7 +19,7 @@ print(otherStyleTime)
 Timeye = now.strftime("%m月%d日")
 print(Timeye)
 ###################################################################
-wordaddress='C:/Users/夏晓蕾/Desktop/日报('+Timeye+'）.docx'
+wordaddress='C:/Users/Desktop/日报('+Timeye+'）.docx'
 print(wordaddress)
 # wordaddress = r'C:\Users\Desktop\日报（12月21日）.docx'
 wordbasicdata = docx.Document(wordaddress)
