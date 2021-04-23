@@ -1,0 +1,220 @@
+import docx
+import datetime
+from docx.shared import Pt, Cm
+from docx.shared import Inches
+from docx.shared import RGBColor
+from docx.oxml.ns import qn
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+import re
+# coding=gbk
+import pandas as pd
+dataFile = []
+newfile_daily = []
+
+####################################################################
+# 时间
+now = datetime.datetime.now()
+otherStyleTime = now.strftime("%Y年%m月%d日")
+print(otherStyleTime)
+Timeye = now.strftime("%m月%d日")
+print(Timeye)
+###################################################################
+wordaddress='C:/Users/夏晓蕾/Desktop/日报('+Timeye+'）.docx'
+print(wordaddress)
+# wordaddress = r'C:\Users\Desktop\日报（12月21日）.docx'
+wordbasicdata = docx.Document(wordaddress)
+# print("段落数:"+str(len(wordbasicdata.paragraphs)))
+###################################################################
+for rowNum in range(len(wordbasicdata.paragraphs)):
+    # if 去掉表头
+    if rowNum > 0:
+        dataFile.append(wordbasicdata.paragraphs[rowNum].text)
+
+print(dataFile)
+###################################################################
+# 逗号分割字符串
+# '一、研发进展情况'分割
+mainprstate = dataFile[2]
+maprestavalue = re.findall(r"[\w']+", mainprstate)
+# print(maprestavalue)
+# print(maprestavalue[0]+'。')
+# '对接进展'分割
+contectstate = dataFile[17]
+constavalue = re.findall(r"[\w']+", contectstate)
+# print(constavalue)
+constavaluetemp = []
+for i in range(len(constavalue)-1):
+    constavaluetemp1 = constavalue[i]
+    # temp2 = temp1.join()
+    constavaluetemp.append(constavaluetemp1)
+# print(constavaluetemp)
+constavaluetemp2 = '，'.join(constavaluetemp)
+# print(constavaluetemp2)
+# '上报数据'分割
+updatadata = dataFile[18]
+updatavalue = re.findall(r"[\w']+", updatadata)
+# print(updatavalue)
+updatavaluetemp = []
+for i in range(len(updatavalue)-1):
+    updatavaluetemp1 = updatavalue[i]
+    # temp2 = temp1.join()
+    updatavaluetemp.append(updatavaluetemp1)
+# print(updatavaluetemp)
+updatavaluetemp2 = '，'.join(updatavaluetemp)
+# print(updatavaluetemp2)
+# # '省内端口'分割
+innerprostate = dataFile[20]
+innprovalue = re.findall(r"[\w']+", innerprostate)
+# print(innprovalue)
+innprovaluetemp = []
+for i in range(len(innprovalue)-1):
+    innprovaluetemp1 = innprovalue[i]
+    # temp2 = temp1.join()
+    innprovaluetemp.append(innprovaluetemp1)
+print(innprovaluetemp)
+innprovaluetemp2 = '，'.join(innprovaluetemp)
+print(innprovaluetemp2)
+# '基础数据库'分割
+basicdatastate = dataFile[22]
+basicdastvalue = re.findall(r"[\w']+", basicdatastate)
+# print(basicdastvalue)
+basicdastvaluetemp = []
+for i in range(len(basicdastvalue)-1):
+    basicdastvaluetemp1 = basicdastvalue[i]
+    # temp2 = temp1.join()
+    basicdastvaluetemp.append(basicdastvaluetemp1)
+# print(basicdastvaluetemp)
+basicdastvaluetemp2 = '，'.join(basicdastvaluetemp)
+# print(basicdastvaluetemp2)
+###################################################################
+file = docx.Document()
+# 写入若干段落
+#################################################################
+# # 添加标题
+# def AddHeadText(text, size):
+#     title_ = file.add_heading(level=1)
+#     title_.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER# 标题居中
+#     title_run = title_.add_run(text)  # 添加标题内容
+#     title_run.font.size = Pt(size)  # 设置标题字体大小
+#     title_run.font.name = 'Times New Roman'  # 设置标题西文字体
+#     title_run.element.rPr.rFonts.set(qn('w:eastAsia'), '黑体')  # 设置标题中文字体
+#     title_run.font.color.rgb = RGBColor(0, 0, 0)#字体颜色
+#################################################################
+# 添加副标题
+def AddnextHeadText(text, size, space_before, space_after, thickness, position):
+    p = file.add_paragraph()  # 段落
+    # 判断居中还是靠左,0为靠左
+    if position == 0:
+        # 靠左
+        p.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+    else:
+        # 居中
+        p.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    p.paragraph_format.space_before = Pt(space_before)
+    p.paragraph_format.space_after = Pt(space_after)
+    text = p.add_run(text)
+    # 判断字体是否加粗（1为不加粗）
+    if thickness == 1:
+        text.bold = False
+    else:
+        text.bold = True # 加粗
+    text.font.name = 'Times New Roman'
+    text.element.rPr.rFonts.set(qn('w:eastAsia'), '黑体')
+    text.font.size = Pt(size)
+#################################################################
+# 添加子标题(参数1：文本内容，参数2：字体大小，参数3：上行距,参数4：下行距,参数5：字体粗细，参数6：段落位置)
+
+
+def AddchParaText(text, size, space_before, space_after, thickness, position):
+    p = file.add_paragraph()  # 段落
+    # p.paragraph_format.first_line_indent = 406000
+    p.paragraph_format.first_line_indent = Cm(0.74)
+    # 判断居中还是靠左,0为靠左
+    if position == 0:
+        # 靠左
+        p.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+    else:
+        # 居中
+        p.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    p.paragraph_format.space_before = Pt(space_before)
+    p.paragraph_format.space_after = Pt(space_after)
+    text = p.add_run(text)
+    # 判断字体是否加粗（1为不加粗）
+    if thickness == 1:
+        text.bold = False
+    else:
+        # 加粗
+        text.bold = True
+    text.font.name = 'Times New Roman'
+    text.element.rPr.rFonts.set(qn('w:eastAsia'), '黑体')
+    text.font.size = Pt(size)
+    p.paragraph_format.line_spacing = 1.5
+################################################################
+# 添加段落内容(参数1：文本内容，参数2：字体大小，参数3：上行距,参数4：下行距,参数5：字体粗细，参数6：段落位置)
+
+
+def AddParaText(text, size, space_before, space_after, thickness, position):
+    p = file.add_paragraph()  # 段落
+    # p.paragraph_format.first_line_indent = 406000
+    p.paragraph_format.first_line_indent = Cm(0.74)
+    # 判断居中还是靠左,0为靠左
+    if position == 0:
+        # 靠左
+        p.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+    else:
+        # 居中
+        p.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    p.paragraph_format.space_before = Pt(space_before)
+    p.paragraph_format.space_after = Pt(space_after)
+    text = p.add_run(text)
+    # 判断字体是否加粗（1为不加粗）
+    if thickness == 1:
+        text.bold = False
+    else:
+        text.bold = True # 加粗
+    text.font.name = 'Times New Roman'
+    text.element.rPr.rFonts.set(qn('w:eastAsia'), '宋体')
+    text.font.size = Pt(size)
+    p.paragraph_format.line_spacing = 1.5
+################################################################
+# AddHeadText('平台工作日报', 18)
+AddnextHeadText('平台工作日报', 18, 0, 0, 0, 1)
+# 日期
+AddnextHeadText(otherStyleTime, 12, 0, 12, 0, 1)
+AddchParaText("一、平台建设情况进展", 14, 0, 12, 1, 0)
+for i in range(6, 12):
+    AddParaText(dataFile[i], 14, 0, 0, 1, 0)
+AddParaText("平台建设汇总情况参见附表1。", 14, 0, 0, 1, 0)
+AddchParaText("二、平台对接情况进展", 14, 0, 12, 1, 0)
+for i in range(14, 16):
+    AddParaText(dataFile[i], 14, 0, 0, 1, 0)
+# '对接进展'部分
+AddParaText(dataFile[16], 14, 0, 0, 1, 0)
+AddParaText(constavaluetemp2+"，详见附表1。", 14, 0, 0, 1, 0)
+# '数据上报'部分
+AddParaText(updatavaluetemp2+"，详见附表2。", 14, 0, 0, 1, 0)
+# '省内追溯接口对接'部分
+AddParaText(dataFile[19], 14, 0, 0, 1, 0)
+AddParaText(innprovaluetemp2+"，详见附表2。", 14, 0, 0, 1, 0)
+# '基础数据库对接'部分
+AddParaText(dataFile[21], 14, 0, 0, 1, 0)
+AddParaText(basicdastvaluetemp2+"，详见附表3。", 14, 0, 0, 1, 0)
+AddchParaText("三、可视化大屏研发进展情况", 14, 0, 12, 1, 0)
+AddParaText(dataFile[4], 14, 0, 0, 1, 0)
+
+AddchParaText("四、平台研发进展情况", 14, 0, 12, 1, 0)
+AddParaText(maprestavalue[0]+'。', 14, 0, 0, 1, 0)
+AddchParaText("五、其他工作", 14, 0, 12, 1, 0)
+AddParaText("今日暂无", 14, 0, 0, 1, 0)
+# AddParaText("        段落内容一", 11, 5, 1, 0)
+# AddHeadText('二、标题二', 12)
+# AddParaText("        段落内容二", 11, 5, 1, 0)
+# AddHeadText('三、标题三', 12)
+# AddParaText("        段落内容三", 11, 5, 1, 0)
+
+
+#################################################################
+name = '平台工作日报'+"("+Timeye+")"+".docx"
+print(name)
+file.save(name)
+
